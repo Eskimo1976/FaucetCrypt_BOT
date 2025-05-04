@@ -2,7 +2,7 @@ import telebot
 import os
 from keep_alive import keep_alive  # Flask-сервер для UptimeRobot
 
-TOKEN = "7903728476:AAFzseQdua2iS8M-uugdTXa7OYmZt-ZFIFA"
+TOKEN = "ТВОЙ_ТОКЕН"
 ADMIN_ID = 2070385303  # Твой Telegram ID
 
 bot = telebot.TeleBot(TOKEN)
