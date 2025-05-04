@@ -7,6 +7,9 @@ USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
 
+# Удаляем старый вебхук, чтобы избежать конфликта
+bot.remove_webhook()
+
 def save_user(user_id, username):
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
         f.seek(0)
