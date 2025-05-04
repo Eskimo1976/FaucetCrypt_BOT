@@ -1,11 +1,21 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from flask import Flask
+import threading
 
 TOKEN = "7903728476:AAFzseQdua2iS8M-uugdTXa7OYmZt-ZFIFA"
 ADMIN_ID = 207038530
 USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return "Бот работает!", 200
+
+def run_flask():
+    app.run(host="0.0.0.0", port=3000)
 
 def save_user(user_id, username):
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
@@ -97,7 +107,6 @@ def send_welcome(message):
         row = [InlineKeyboardButton(text=name, url=url) for name, url in links[i:i + 2]]
         markup.add(*row)
 
-    # Добавим кнопку на сам сайт
     markup.add(InlineKeyboardButton("Перейти на сайт FaucetUA", url="https://faucetua.online/"))
 
     bot.send_message(message.chat.id, description, parse_mode="Markdown", reply_markup=markup)
@@ -135,6 +144,9 @@ def send_stats(message):
         bot.reply_to(message, f"Пользователей в базе: {len(lines)}")
     except FileNotFoundError:
         bot.reply_to(message, "Файл пользователей не найден.")
+
+# Запуск Flask в отдельном потоке
+threading.Thread(target=run_flask).start()
 
 print("Бот запущен...")
 bot.infinity_polling()
