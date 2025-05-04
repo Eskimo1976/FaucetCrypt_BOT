@@ -20,8 +20,8 @@ def send_welcome(message):
 
     description = (
         "Добро пожаловать в бота *FaucetUA!*\n\n"
-        "Здесь вы найдёте лучшие сайты для заработка криптовалюты без вложений.\n"
-        "Просто нажмите на нужную кнопку ниже и начните зарабатывать!"
+        "Здесь собраны лучшие сайты для заработка криптовалюты без вложений. "
+        "Просто выберите любой из списка ниже и начните зарабатывать!"
     )
 
     links = [
@@ -66,7 +66,6 @@ def send_welcome(message):
         ("Whoopyy", "https://whoopyrewards.com"),
         ("GenkMinner", "https://genkiminer.com"),
         ("MultiCoin", "https://assetni.com"),
-        # Страница 2
         ("SkullBTC", "https://skullbtc.site"),
         ("SolWin", "https://solwin.site"),
         ("1doge", "https://1doge.site"),
