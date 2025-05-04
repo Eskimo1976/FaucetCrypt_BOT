@@ -2,68 +2,61 @@ import telebot
 import os
 from keep_alive import keep_alive  # Flask-сервер для UptimeRobot
 
-TOKEN = os.environ.get("TOKEN")
-ADMIN_ID = int(os.environ.get("ADMIN_ID", "123456789"))
-
-if not TOKEN:
-    raise ValueError("Переменная окружения 'TOKEN' не задана.")
+TOKEN = "7903728476:AAFzseQdua2iS8M-uugdTXa7OYmZt-ZFIFA"
+ADMIN_ID = 2070385303  # Твой Telegram ID
 
 bot = telebot.TeleBot(TOKEN)
 USERS_FILE = "users.txt"
 
-# Сохраняем пользователя
-def save_user(user_id, username):
-    new_entry = f"{user_id} | @{username or 'Без_ника'}"
+def save_user(user_id):
     if not os.path.exists(USERS_FILE):
         with open(USERS_FILE, "w") as f:
-            f.write(new_entry + "\n")
+            f.write(str(user_id) + "\n")
         return
     with open(USERS_FILE, "r") as f:
         users = f.read().splitlines()
-    if not any(str(user_id) in u for u in users):
+    if str(user_id) not in users:
         with open(USERS_FILE, "a") as f:
-            f.write(new_entry + "\n")
+            f.write(str(user_id) + "\n")
 
-# Команда /start
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    save_user(message.chat.id, message.from_user.username)
+    user_id = message.chat.id
+    save_user(user_id)
 
     description = (
-        "Привет! Это бот сайта [FaucetUA](https://faucetua.online/) — сборник лучших кранов, "
-        "позволяющих зарабатывать криптовалюту бесплатно. Просто выбери любой сайт из списка ниже и начинай зарабатывать!"
+        "Добро пожаловать в крипто-бот!\n\n"
+        "Здесь вы найдёте лучшие сайты для заработка криптовалюты. "
+        "Выбирайте нужный сайт и начинайте зарабатывать!"
     )
 
     links = [
-        ("BtcViev", "https://www.bitcoviews.com"),
-        ("FireFaucet", "https://firefaucet.win"),
-        ("Moneta FV", "https://helpfpcoin.site"),
-        ("OnlyFaucet", "https://onlyfaucet.com"),
-        ("СrYpto", "https://earncryptowrs.in"),
-        ("Gemerle", "https://gamerlee.com"),
-        ("EarnSolana", "https://earnsolana.xyz"),
-        ("CryptoFuture", "https://cryptofuture.co.in"),
-        ("ClaimCrypt", "https://claimcrypto.in"),
-        ("Effa Crypt", "https://eftacrypto.com"),
-        ("Freee Crypto", "https://freeltc.fun"),
-        ("Wheal", "https://wheelofgold.com"),
-        ("FaucetWorld", "https://faucetworld.in"),
-        ("RS Faucet", "https://rsfaucet.com"),
-        ("BestPaying", "https://bestpayingfaucet.online"),
-        ("Earn Crypto", "https://earn-pepe.com"),
-        ("EarnTrump", "https://earn-trump.com"),
-        ("Baggy Cript", "https://bagi.co.in"),
-        ("FaucetPay", "https://faucetpay.io"),
-        ("SatoshiFaucet", "https://satoshifaucet.io"),
-        ("Ad BTC", "https://r.adbtc.top"),
-        ("Links TON", "https://ton.leaks.work"),
-        ("KiddyEarn", "https://kiddyearner.com"),
-        ("FaucetUsdt", "https://treaw.com"),
-        ("Link Dogy", "https://ch3zo.com"),
+        ("OnlyFaucet — простой кран", "https://onlyfaucet.com"),
+        ("EarnCryptoWRS — бонусы", "https://earncryptowrs.in"),
+        ("Gamerlee — игры и крипта", "https://gamerlee.com"),
+        ("EarnSolana — кран Solana", "https://earnsolana.xyz"),
+        ("CryptoFuture — задания", "https://cryptofuture.co.in"),
+        ("ClaimCrypto — быстрые выплаты", "https://claimcrypto.in"),
+        ("EftaCrypto — простой интерфейс", "https://eftacrypto.com"),
+        ("FreeLTC — Litecoin кран", "https://freeltc.fun"),
+        ("Wheel of Gold — крутите колесо", "https://wheelofgold.com"),
+        ("FaucetWorld — много кранов", "https://faucetworld.in"),
+        ("RS Faucet — TRX и другие", "https://rsfaucet.com"),
+        ("BestPayingFaucet — ТОП сайты", "https://bestpayingfaucet.online"),
+        ("Earn Pepe — заработок на PEPE", "https://earn-pepe.com"),
+        ("EarnTrump — крипто-Трамп", "https://earn-trump.com"),
+        ("BagiCoin — быстрая регистрация", "https://bagi.co.in"),
+        ("FaucetPay кошелек", "https://faucetpay.io"),
+        ("SatoshiFaucet — классика", "https://satoshifaucet.io"),
+        ("AdBTC — серфинг за BTC", "https://r.adbtc.top"),
+        ("TON Links", "https://ton.leaks.work"),
+        ("Kiddy Earner", "https://kiddyearner.com"),
+        ("USDT Faucet", "https://treaw.com"),
+        ("Dogecoin Link", "https://ch3zo.com"),
         ("FaucetPayz", "https://faucetpayz.com"),
-        ("Whoopyy", "https://whoopyrewards.com"),
-        ("GenkyMinner", "https://genkiminer.com"),
-        ("MultiCoin", "https://assetni.com"),
+        ("Whoopy Rewards", "https://whoopyrewards.com"),
+        ("Genki Miner", "https://genkiminer.com"),
+        ("Assetni — мульти-кран", "https://assetni.com"),
     ]
 
     markup = telebot.types.InlineKeyboardMarkup(row_width=2)
@@ -71,15 +64,8 @@ def send_welcome(message):
         buttons = [telebot.types.InlineKeyboardButton(name, url=url) for name, url in links[i:i+2]]
         markup.add(*buttons)
 
-    bot.send_message(
-        message.chat.id,
-        description,
-        parse_mode="Markdown",
-        disable_web_page_preview=True,
-        reply_markup=markup
-    )
+    bot.send_message(user_id, description, reply_markup=markup)
 
-# Команда /sendall — рассылка от администратора
 @bot.message_handler(commands=['sendall'])
 def send_broadcast(message):
     if message.chat.id != ADMIN_ID:
@@ -96,11 +82,10 @@ def send_broadcast(message):
         return
 
     with open(USERS_FILE, "r") as f:
-        user_lines = f.read().splitlines()
+        users = f.read().splitlines()
 
     count = 0
-    for line in user_lines:
-        user_id = line.split("|")[0].strip()
+    for user_id in users:
         try:
             bot.send_message(user_id, text)
             count += 1
@@ -108,19 +93,16 @@ def send_broadcast(message):
             continue
     bot.reply_to(message, f"Сообщение отправлено {count} пользователям.")
 
-# Команда /stats — статистика пользователей
 @bot.message_handler(commands=['stats'])
 def send_stats(message):
     if message.chat.id != ADMIN_ID:
         return
     if os.path.exists(USERS_FILE):
         with open(USERS_FILE, "r") as f:
-            users = f.read().splitlines()
-            count = len(users)
+            count = len(f.read().splitlines())
     else:
         count = 0
-    bot.reply_to(message, f"Всего пользователей: {count}")
+    bot.reply_to(message, f"Количество пользователей: {count}")
 
-# Запуск
 keep_alive()
 bot.infinity_polling()
