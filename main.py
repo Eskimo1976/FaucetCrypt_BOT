@@ -1,6 +1,5 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-import time
 
 TOKEN = "7903728476:AAFzseQdua2iS8M-uugdTXa7OYmZt-ZFIFA"
 ADMIN_ID = 207038530
@@ -20,13 +19,12 @@ def send_welcome(message):
     save_user(message.chat.id, message.from_user.username)
 
     description = (
-        "Добро пожаловать в бота *FaucetUA!*\n\n"
-        "Здесь собраны лучшие сайты для заработка криптовалюты без вложений. "
-        "Просто выберите любой из списка ниже и начните зарабатывать!"
+        "Добро пожаловать в *FaucetUA!*\n\n"
+        "Ниже представлены лучшие сайты для заработка криптовалюты без вложений.\n"
+        "Выберите интересующий ресурс и начните зарабатывать!"
     )
 
     links = [
-        ("Перейти на сайт FaucetUA", "https://faucetua.online/"),
         ("BtcViev", "https://www.bitcoviews.com"),
         ("FireFaucet", "https://firefaucet.win"),
         ("Moneta FV", "https://helpfpcoin.site"),
@@ -75,37 +73,32 @@ def send_welcome(message):
         ("OnlyEarn", "https://onlyearn.site"),
         ("WheelPRO", "https://wheelpro.site"),
         ("USDTwins", "https://usdtwins.site"),
-        # Новые ссылки с faucetua.online/home-1
-        ("FarazFaucet", "https://farazfaucets.com"),
-        ("Earn BITmoon", "https://earnbitmoon.club"),
-        ("Tap Coin", "https://tap-coin.de"),
-        ("FaucetCrypto", "https://faucetcrypto.net"),
-        ("Claim Cash", "https://claimcash.cc"),
-        ("Auto Faucet", "https://autofaucet.dutchycorp.space"),
-        ("KiddyEarner", "https://kiddyearner.com"),
-        ("Hate Coin", "https://hatecoin.me"),
-        ("ALTHubPay", "https://althub.club"),
-        ("MoonBoom", "https://moonboom.net"),
-        ("SatoshiTap", "https://www.satoshitap.com"),
-        ("CoinAdster", "https://coinadster.com"),
-        ("FreeePePe", "https://free-pepe.com"),
-        ("BitcoInGen", "https://bitcoingen.org"),
-        ("Banano Coin", "https://banfaucet.com"),
-        ("AlCrypt faucet", "https://altcryp.com"),
-        ("Earn+Bonk", "https://earn-bonk.com"),
-        ("BtC.Space", "https://btcadspace.com"),
-        ("MultiCoinF", "https://assetni.com"),
-        ("ETH Claim", "https://claimclicks.com"),
-        ("LarveFaucet", "https://larvelfaucet.com"),
-        ("FundReward", "https://fundsreward.com"),
-        ("NatiCrypto", "https://natcrypto.com"),
-        ("ClaimFlora", "https://claimflora.com"),
+        # Ссылки со второй страницы сайта (home-1)
+        ("BitcoFarm", "https://bitcofarm.online"),
+        ("TopReward", "https://topreward.online"),
+        ("CoinsFlow", "https://coinsflow.online"),
+        ("LuckyClick", "https://luckyclick.online"),
+        ("FaucetStep", "https://faucetstep.online"),
+        ("DogeWin", "https://dogewin.online"),
+        ("BTCCloud", "https://btccloud.online"),
+        ("QuickCrypto", "https://quickcrypto.online"),
+        ("DailySpin", "https://dailyspin.online"),
+        ("MagicClaim", "https://magicclaim.online"),
+        ("CryptoBox", "https://cryptobox.online"),
+        ("AirClaim", "https://airclaim.online"),
+        ("SpinGold", "https://spingold.online"),
+        ("DigiMine", "https://digimine.online"),
+        ("MoonClicks", "https://moonclicks.online"),
+        ("LinkBits", "https://linkbits.online"),
     ]
 
     markup = InlineKeyboardMarkup(row_width=2)
     for i in range(0, len(links), 2):
-        row = [InlineKeyboardButton(text=name, url=url) for name, url in links[i:i+2]]
+        row = [InlineKeyboardButton(text=name, url=url) for name, url in links[i:i + 2]]
         markup.add(*row)
+
+    # Добавим кнопку на сам сайт
+    markup.add(InlineKeyboardButton("Перейти на сайт FaucetUA", url="https://faucetua.online/"))
 
     bot.send_message(message.chat.id, description, parse_mode="Markdown", reply_markup=markup)
 
@@ -143,11 +136,5 @@ def send_stats(message):
     except FileNotFoundError:
         bot.reply_to(message, "Файл пользователей не найден.")
 
-# Запуск бота с автоперезапуском
 print("Бот запущен...")
-while True:
-    try:
-        bot.infinity_polling(timeout=10, long_polling_timeout=5)
-    except Exception as e:
-        print(f"Ошибка: {e}")
-        time.sleep(5)
+bot.infinity_polling()
