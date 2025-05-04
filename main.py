@@ -15,7 +15,7 @@ def index():
     return "Бот работает!", 200
 
 def run_flask():
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=5000)
 
 def save_user(user_id, username):
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
