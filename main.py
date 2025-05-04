@@ -1,14 +1,12 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+import time
 
 TOKEN = "7903728476:AAFzseQdua2iS8M-uugdTXa7OYmZt-ZFIFA"
 ADMIN_ID = 207038530
 USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
-
-# Удаляем старый вебхук, чтобы избежать конфликта
-bot.remove_webhook()
 
 def save_user(user_id, username):
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
@@ -77,6 +75,31 @@ def send_welcome(message):
         ("OnlyEarn", "https://onlyearn.site"),
         ("WheelPRO", "https://wheelpro.site"),
         ("USDTwins", "https://usdtwins.site"),
+        # Новые ссылки с faucetua.online/home-1
+        ("FarazFaucet", "https://farazfaucets.com"),
+        ("Earn BITmoon", "https://earnbitmoon.club"),
+        ("Tap Coin", "https://tap-coin.de"),
+        ("FaucetCrypto", "https://faucetcrypto.net"),
+        ("Claim Cash", "https://claimcash.cc"),
+        ("Auto Faucet", "https://autofaucet.dutchycorp.space"),
+        ("KiddyEarner", "https://kiddyearner.com"),
+        ("Hate Coin", "https://hatecoin.me"),
+        ("ALTHubPay", "https://althub.club"),
+        ("MoonBoom", "https://moonboom.net"),
+        ("SatoshiTap", "https://www.satoshitap.com"),
+        ("CoinAdster", "https://coinadster.com"),
+        ("FreeePePe", "https://free-pepe.com"),
+        ("BitcoInGen", "https://bitcoingen.org"),
+        ("Banano Coin", "https://banfaucet.com"),
+        ("AlCrypt faucet", "https://altcryp.com"),
+        ("Earn+Bonk", "https://earn-bonk.com"),
+        ("BtC.Space", "https://btcadspace.com"),
+        ("MultiCoinF", "https://assetni.com"),
+        ("ETH Claim", "https://claimclicks.com"),
+        ("LarveFaucet", "https://larvelfaucet.com"),
+        ("FundReward", "https://fundsreward.com"),
+        ("NatiCrypto", "https://natcrypto.com"),
+        ("ClaimFlora", "https://claimflora.com"),
     ]
 
     markup = InlineKeyboardMarkup(row_width=2)
@@ -120,5 +143,11 @@ def send_stats(message):
     except FileNotFoundError:
         bot.reply_to(message, "Файл пользователей не найден.")
 
+# Запуск бота с автоперезапуском
 print("Бот запущен...")
-bot.infinity_polling()
+while True:
+    try:
+        bot.infinity_polling(timeout=10, long_polling_timeout=5)
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        time.sleep(5)
