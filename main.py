@@ -4,6 +4,7 @@ from flask import Flask
 import threading
 import os
 from dotenv import load_dotenv
+from keep_alive import keep_alive  # Импорт поддержки активности
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
@@ -13,7 +14,7 @@ USERS_FILE = "users.txt"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
-user_clicks = {}  # Словарь для отслеживания кликов
+user_clicks = {}
 
 @app.route("/")
 def index():
@@ -51,5 +52,6 @@ def polling_thread():
     bot.infinity_polling()
 
 if __name__ == "__main__":
+    keep_alive()  # Активируем поддержку постоянной работы (например, для Replit)
     threading.Thread(target=run_flask).start()
     polling_thread()
