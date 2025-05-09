@@ -4,7 +4,7 @@ from flask import Flask
 import threading
 import os
 from dotenv import load_dotenv
-from keep_alive import keep_alive  # Импорт поддержки активности
+from keep_alive import keep_alive
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
@@ -36,14 +36,13 @@ def send_welcome(message):
     user_clicks[message.chat.id] = 0
 
     description = (
-        "Добро пожаловать в *FaucetBot!* \n"
-        "Я помогу тебе находить лучшие краны для заработка криптовалюты. "
-        "Просто выбери из меню ниже или жми на кнопки!"
+        "Добро пожаловать в *FaucetBot!*\\n"
+        "Переходи по ссылке и начинай зарабатывать криптовалюту: [faucetua.online](https://faucetua.online/)"
     )
 
     markup = InlineKeyboardMarkup()
     markup.row(
-        InlineKeyboardButton("Перейти на сайт", url="https://example.com")
+        InlineKeyboardButton("Открыть сайт faucetua.online", url="https://faucetua.online/")
     )
 
     bot.send_message(message.chat.id, description, parse_mode="Markdown", reply_markup=markup)
@@ -52,6 +51,6 @@ def polling_thread():
     bot.infinity_polling()
 
 if __name__ == "__main__":
-    keep_alive()  # Активируем поддержку постоянной работы (например, для Replit)
+    keep_alive()
     threading.Thread(target=run_flask).start()
     polling_thread()
