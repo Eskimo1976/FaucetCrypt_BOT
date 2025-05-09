@@ -2,8 +2,11 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from flask import Flask
 import threading
+import os
+from dotenv import load_dotenv
 
-TOKEN = "7903728476:AAHoJb6JspBYiDSYs9ALMB3J5iW6lw-lBuM"
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = 207038530
 USERS_FILE = "users.txt"
 
@@ -29,69 +32,24 @@ def save_user(user_id, username):
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     save_user(message.chat.id, message.from_user.username)
-    user_clicks[message.chat.id] = 0  # сбрасываем счётчик при старте
+    user_clicks[message.chat.id] = 0
 
     description = (
-        "Добро пожаловать в *FaucetUA!*\n\n"
-        "Выберите интересующий ресурс и начните зарабатывать!"
+        "Добро пожаловать в *FaucetBot!* \n"
+        "Я помогу тебе находить лучшие краны для заработка криптовалюты. "
+        "Просто выбери из меню ниже или жми на кнопки!"
     )
 
-    markup = InlineKeyboardMarkup(row_width=1)
-    markup.add(
-        InlineKeyboardButton("BtcViev", callback_data="link_clicked"),
-        InlineKeyboardButton("FireFaucet", callback_data="link_clicked"),
-        InlineKeyboardButton("Перейти на сайт FaucetUA", url="https://faucetua.online/")
+    markup = InlineKeyboardMarkup()
+    markup.row(
+        InlineKeyboardButton("Перейти на сайт", url="https://example.com")
     )
 
     bot.send_message(message.chat.id, description, parse_mode="Markdown", reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data == "link_clicked")
-def handle_link_click(call):
-    user_id = call.message.chat.id
-    user_clicks[user_id] = user_clicks.get(user_id, 0) + 1
+def polling_thread():
+    bot.infinity_polling()
 
-    if user_clicks[user_id] >= 2:
-        bot.answer_callback_query(call.id, "Хочешь больше? Переходи на сайт!", show_alert=True)
-        bot.send_message(user_id, "Хочешь больше? Переходи на сайт https://faucetua.online")
-    else:
-        bot.answer_callback_query(call.id, "Ссылка открыта.")
-
-@bot.message_handler(commands=['sendall'])
-def send_broadcast(message):
-    if message.chat.id != ADMIN_ID:
-        return
-    text = message.text.replace('/sendall', '').strip()
-    if not text:
-        bot.reply_to(message, "Введите текст для рассылки.")
-        return
-    try:
-        with open(USERS_FILE, "r", encoding="utf-8") as f:
-            users = [line.split('|')[0].strip() for line in f if line.strip()]
-    except FileNotFoundError:
-        users = []
-
-    count = 0
-    for user_id in users:
-        try:
-            bot.send_message(user_id, text)
-            count += 1
-        except:
-            continue
-    bot.reply_to(message, f"Сообщение отправлено {count} пользователям.")
-
-@bot.message_handler(commands=['stats'])
-def send_stats(message):
-    if message.chat.id != ADMIN_ID:
-        return
-    try:
-        with open(USERS_FILE, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        bot.reply_to(message, f"Пользователей в базе: {len(lines)}")
-    except FileNotFoundError:
-        bot.reply_to(message, "Файл пользователей не найден.")
-
-# Запуск Flask в отдельном потоке
-threading.Thread(target=run_flask).start()
-
-print("Бот запущен...")
-bot.infinity_polling()
+if __name__ == "__main__":
+    threading.Thread(target=run_flask).start()
+    polling_thread()
