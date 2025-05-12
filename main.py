@@ -79,7 +79,8 @@ def send_welcome(message):
         ("Altcryp", "https://altcryp.com/?r=35239"),
         ("ClaimFlora", "https://claimflora.com/?r=563"),
         ("SimpleBits", "https://simplebits.io/ref/7fjaILCsd9AmooIF3MMYz"),
-        ("Main Site", "https://faucetua.online/")
+        ("Main Site", "https://faucetua.online/"),
+        ("Личный кабинет", "https://faucetpay.io/?r=8936300")
     ]
 
     markup = InlineKeyboardMarkup()
