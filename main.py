@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from keep_alive import keep_alive
 
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("TOKEN")  # изменено с BOT_TOKEN на TOKEN
 USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
@@ -84,10 +84,10 @@ def send_welcome(message):
 
     markup = InlineKeyboardMarkup()
 
-    # Личный кабинет — отдельная большая кнопка сверху
+    # Кнопка личного кабинета — одна, сверху
     markup.add(InlineKeyboardButton("Личный кабинет", url="https://faucetpay.io/?r=8936300"))
 
-    # Остальные кнопки — по 2 в ряд
+    # Кнопки по две в ряд
     for i in range(0, len(links), 2):
         row = links[i:i+2]
         markup.row(*(InlineKeyboardButton(text=name, url=url) for name, url in row))
