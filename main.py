@@ -22,7 +22,6 @@ def index():
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
 
-# ДОБАВЛЕНО: безопасное создание users.txt
 def save_user(user_id, username):
     os.makedirs(os.path.dirname(USERS_FILE) or ".", exist_ok=True)
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
@@ -31,7 +30,6 @@ def save_user(user_id, username):
         if str(user_id) not in [u.split("|")[0].strip() for u in users]:
             f.write(f"{user_id} | @{username or 'NoUsername'}\n")
 
-# Категории ссылок
 categories = {
     "Перспективные": [
         ("EarnSolana", "https://earnsolana.xyz/?r=14425"),
@@ -92,6 +90,21 @@ categories = {
 @bot.message_handler(commands=['start'])
 def send_category_selection(message):
     save_user(message.chat.id, message.from_user.username)
+
+    welcome_text = (
+        "*FaucetCrypt_BOT*\n\n"
+        "Telegram-бот для быстрого доступа к лучшим криптовалютным кранам.\n\n"
+        "*Что умеет бот:*\n"
+        "- Более 50 проверенных сайтов для заработка криптовалюты\n"
+        "- Удобное разделение по категориям:\n"
+        "  • Перспективные — дешёвые токены (Solana, Bonk, Pepe и др.), которые могут вырасти\n"
+        "  • Мультикраны — сайты с бонусами на множество монет (BTC, ETH, DOGE и т.д.)\n"
+        "  • Выгодные — сайты с высокой доходностью и хорошей репутацией\n"
+        "  • Все сайты — полный список\n"
+        "- Кнопка *«Личный кабинет»* ведёт на FaucetPay для вывода\n\n"
+        "*Выберите категорию ниже:*"
+    )
+
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
         InlineKeyboardButton("Перспективные", callback_data="filter_Перспективные"),
@@ -100,19 +113,14 @@ def send_category_selection(message):
         InlineKeyboardButton("Все сайты", callback_data="filter_Все"),
         InlineKeyboardButton("Поддержка", callback_data="support")
     )
-    bot.send_message(
-        message.chat.id,
-        "Выберите категорию кранов:",
-        reply_markup=markup
-    )
+
+    bot.send_message(message.chat.id, welcome_text, reply_markup=markup, parse_mode="Markdown")
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("filter_"))
 def send_filtered_links(call):
     cat = call.data.split("_", 1)[1]
     links = categories.get(cat, [])
     markup = InlineKeyboardMarkup(row_width=2)
-
-    # Личный кабинет — первой кнопкой
     markup.add(InlineKeyboardButton("Личный кабинет", url="https://faucetpay.io/?r=8936300"))
 
     for i in range(0, len(links), 2):
