@@ -79,13 +79,18 @@ def send_welcome(message):
         ("Altcryp", "https://altcryp.com/?r=35239"),
         ("ClaimFlora", "https://claimflora.com/?r=563"),
         ("SimpleBits", "https://simplebits.io/ref/7fjaILCsd9AmooIF3MMYz"),
-        ("Main Site", "https://faucetua.online/"),
-        ("Личный кабинет", "https://faucetpay.io/?r=8936300")
+        ("Main Site", "https://faucetua.online/")
     ]
 
     markup = InlineKeyboardMarkup()
-    for name, url in links:
-        markup.add(InlineKeyboardButton(text=name, url=url))
+
+    # Личный кабинет — отдельная большая кнопка сверху
+    markup.add(InlineKeyboardButton("Личный кабинет", url="https://faucetpay.io/?r=8936300"))
+
+    # Остальные кнопки — по 2 в ряд
+    for i in range(0, len(links), 2):
+        row = links[i:i+2]
+        markup.row(*(InlineKeyboardButton(text=name, url=url) for name, url in row))
 
     bot.send_message(
         message.chat.id,
