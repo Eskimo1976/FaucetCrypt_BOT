@@ -4,6 +4,7 @@ from flask import Flask
 import threading
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 from keep_alive import keep_alive
 
 load_dotenv()
@@ -13,7 +14,6 @@ USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
-
 user_clicks = {}
 
 @app.route("/")
@@ -24,11 +24,31 @@ def run_flask():
     app.run(host="0.0.0.0", port=5000)
 
 def save_user(user_id, username):
-    with open(USERS_FILE, "a+", encoding="utf-8") as f:
-        f.seek(0)
-        users = f.read().splitlines()
-        if str(user_id) not in [u.split("|")[0].strip() for u in users]:
-            f.write(f"{user_id} | @{username or 'NoUsername'}\n")
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    user_data = f"{user_id} | @{username or 'NoUsername'} | {date} | 1"
+
+    if not os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "w", encoding="utf-8") as f:
+            f.write(user_data + "\n")
+        return
+
+    lines = []
+    found = False
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        for line in f:
+            if str(user_id) in line:
+                parts = line.strip().split("|")
+                parts[-1] = str(int(parts[-1]) + 1)
+                lines.append(" | ".join(p.strip() for p in parts) + "\n")
+                found = True
+            else:
+                lines.append(line)
+
+    if not found:
+        lines.append(user_data + "\n")
+
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -101,6 +121,33 @@ def send_welcome(message):
         reply_markup=markup,
         parse_mode="Markdown"
     )
+
+@bot.message_handler(commands=['profile'])
+def profile(message):
+    user_id = message.chat.id
+    username = message.from_user.username or "NoUsername"
+    try:
+        with open(USERS_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                if str(user_id) in line:
+                    parts = line.strip().split("|")
+                    reg_date = parts[2].strip()
+                    launches = parts[3].strip()
+                    break
+            else:
+                reg_date = "Неизвестно"
+                launches = "0"
+    except Exception:
+        reg_date = "Ошибка"
+        launches = "?"
+
+    bot.send_message(user_id, (
+        f"👤 *Ваш профиль*\n\n"
+        f"ID: `{user_id}`\n"
+        f"Username: @{username}\n"
+        f"Дата регистрации: {reg_date}\n"
+        f"Запусков бота: {launches}"
+    ), parse_mode="Markdown")
 
 if __name__ == "__main__":
     keep_alive()
