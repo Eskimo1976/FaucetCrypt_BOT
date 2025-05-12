@@ -8,8 +8,8 @@ from keep_alive import keep_alive
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
+ADMIN_ID = int(os.environ.get("ADMIN_ID"))  # <-- теперь берётся безопасно
 USERS_FILE = "users.txt"
-ADMIN_ID = 207038530
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
@@ -97,7 +97,7 @@ def send_category_selection(message):
         "*Что умеет бот:*\n"
         "- Более 50 проверенных сайтов для заработка криптовалюты\n"
         "- Удобное разделение по категориям:\n"
-        "  • Перспективные — дешёвые токены (Solana, Bonk, Pepe и др.), которые могут вырасти\n"
+        "  • Перспективные — дешёвые токены (Solana, Bonk, Pepe и др.)\n"
         "  • Мультикраны — сайты с бонусами на множество монет (BTC, ETH, DOGE и т.д.)\n"
         "  • Выгодные — сайты с высокой доходностью и хорошей репутацией\n"
         "  • Все сайты — полный список\n"
