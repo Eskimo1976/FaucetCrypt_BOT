@@ -28,3 +28,5 @@ Thumbs.db
 # Token and config files
 config.json
 secrets.json
+
+users.txt
