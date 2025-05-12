@@ -22,6 +22,7 @@ def index():
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
 
+# ДОБАВЛЕНО: безопасное создание users.txt
 def save_user(user_id, username):
     os.makedirs(os.path.dirname(USERS_FILE) or ".", exist_ok=True)
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
