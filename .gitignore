@@ -1,3 +1,30 @@
-.env
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env
+*.sqlite3
+*.db
+
+# Virtual environments
+venv/
+env/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Mac and system files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Token and config files
+config.json
+secrets.json
