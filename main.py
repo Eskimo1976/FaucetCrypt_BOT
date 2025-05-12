@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from keep_alive import keep_alive
 
 load_dotenv()
-TOKEN = os.getenv("TOKEN")  # изменено с BOT_TOKEN на TOKEN
+TOKEN = os.getenv("TOKEN")  # для Railway
 USERS_FILE = "users.txt"
 
 bot = telebot.TeleBot(TOKEN)
@@ -20,7 +20,9 @@ def index():
 def run_flask():
     app.run(host="0.0.0.0", port=5000)
 
+# Обновлённая функция
 def save_user(user_id, username):
+    os.makedirs(os.path.dirname(USERS_FILE) or ".", exist_ok=True)
     with open(USERS_FILE, "a+", encoding="utf-8") as f:
         f.seek(0)
         users = f.read().splitlines()
@@ -84,10 +86,10 @@ def send_welcome(message):
 
     markup = InlineKeyboardMarkup()
 
-    # Кнопка личного кабинета — одна, сверху
+    # Личный кабинет — первой строкой, одна большая кнопка
     markup.add(InlineKeyboardButton("Личный кабинет", url="https://faucetpay.io/?r=8936300"))
 
-    # Кнопки по две в ряд
+    # Остальные — по две в ряд
     for i in range(0, len(links), 2):
         row = links[i:i+2]
         markup.row(*(InlineKeyboardButton(text=name, url=url) for name, url in row))
